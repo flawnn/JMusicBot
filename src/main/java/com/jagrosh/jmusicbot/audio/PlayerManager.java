@@ -20,7 +20,15 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingNanoIpRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block;
 import net.dv8tion.jda.api.entities.Guild;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -40,6 +48,12 @@ public class PlayerManager extends DefaultAudioPlayerManager
         AudioSourceManagers.registerRemoteSources(this);
         AudioSourceManagers.registerLocalSource(this);
         source(YoutubeAudioSourceManager.class).setPlaylistPageCount(10);
+
+
+        @SuppressWarnings("rawtypes") final List<IpBlock> blocks = Collections.singletonList(new Ipv6Block("2a02:c207:2053:126::/64"));
+        final AbstractRoutePlanner planner = new RotatingNanoIpRoutePlanner(blocks);
+
+        new YoutubeIpRotatorSetup(planner).forSource(source(YoutubeAudioSourceManager.class)).setup();
     }
     
     public Bot getBot()
